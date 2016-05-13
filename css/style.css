@@ -1,0 +1,33 @@
+
+body{
+    font-family: 'Roboto', sans-serif;
+}
+
+h1{
+  font-size: 5em;
+}
+
+header{
+  text-align: center;
+}
+
+
+.container{
+
+  padding-top: 25px;
+  border: solid black 1px;
+  text-align: center;
+
+}
+
+#setting{
+  margin:25px auto;
+}
+
+
+.child { /* This is the item to center... */
+  display: inline-block;
+}
+.parent { /* ...and this is its parent container. */
+  text-align: center;
+}

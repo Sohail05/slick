@@ -1,0 +1,31 @@
+{
+  "name": "Slick",
+  "authors": [
+    "Sohail Aj. <sohail.aj05@gmail.com>"
+  ],
+  "description": "HTTP Requests made easy",
+  "main": "index.html",
+  "keywords": [
+    "HTTP",
+    "API",
+    "TOOL"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "src"
+  ],
+  "dependencies": {
+    "vue": "^1.0.21",
+    "superagent": "^1.8.3",
+    "font-awesome": "^4.6.1",
+    "bootstrap": "^3.3.6",
+    "aja": "^0.4.1"
+  }
+}
