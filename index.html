@@ -7,7 +7,7 @@
     <meta name="description" content="HTTP Requests made easy">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Slick ://</title>
+    <title>Slick</title>
 
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
@@ -35,9 +35,8 @@
             <h1>Slick://</h1>
             <p>HTTP Requests made easy</p>
         </header>
-
+<a href="https://github.com/Sohail05/slick"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
         <div id="app">
-
             <form @submit.prevent="submit">
                 <div class="form-inline">
                     <div class="form-group">
@@ -51,11 +50,6 @@
                                 {{ i }}
                             </option>
                         </select>
-                        <select class="btn btn-default" v-model="type">
-                            <option v-for="i in types" v-bind:value="i">
-                                {{ i }}
-                            </option>
-                        </select>
                     </div>
                     <br>
                     <input class="form-control" v-model="url" style="width:500px">
@@ -64,7 +58,6 @@
                 <div v-el:inputs id="inputs" v-for="parameter in parameters">
                     <variable :parameter="parameter"></variable>
                 </div>
-
                 <div>
                     <button class="btn btn-default" @click.prevent="add"><i class="fa fa-plus fa-fw"></i></button>
                     <button class="btn btn-default" v-show="url">{{{button}}}</button>
@@ -75,8 +68,19 @@
                 <div>
                     <p v-el:output id="output"></p>
                 </div>
-                <div style="text-align:left"><pre>{{ response |json}}</pre></div>
-                <div style="text-align:left"><pre>{{ $data | json }}</pre></div>
+                <div v-show="responseHeader" style="text-align:left">
+                    <p>Request Header</p>
+                    <pre>{{ responseHeader | json }}</pre>
+                </div>
+                <div v-show="responseHeader" style="text-align:left">
+                  <select class="btn btn-default" v-model="type">
+                      <option v-for="i in types" v-bind:value="i">
+                          {{ i }}
+                      </option>
+                  </select>
+                  <pre v-show="type=='json'">{{ response|json }}</pre>
+                  <pre v-show="type=='html'">{{{ response }}}</pre>
+                </div>
             </div>
         </div>
     </div>
@@ -85,20 +89,25 @@
     <template id="variable-template">
         <div>
             <input v-model="parameter.name" type='text' placeholder="Request Variable Name" />
-            <input v-model="parameter.value" :name="parameter.name" type='text' placeholder="Value" />
+            <input v-model="parameter.type" type='text' placeholder="Data Type" />
+            <input v-model="parameter.value" :name="parameter.name" :type="parameter.type" placeholder="Value" />
             <button @click.prevent="remove(parameter)"><i class="fa fa-minus"></i></button>
         </div>
     </template>
 
     <!-- JS -->
-    <script>window.jQuery || document.write('<script src="https://code.jquery.com/jquery-2.2.3.min.js"><\/script>')</script>
-    <script>window.Vue || document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.24/vue.min.js"><\/script>')</script>
     <script>
-      if(!(typeof $().modal == 'function')){
-        document.write('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css">');
-        document.write('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">');
-        document.write('<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"><\/script>');
-      }
+        window.jQuery || document.write('<script src="https://code.jquery.com/jquery-2.2.3.min.js"><\/script>')
+    </script>
+    <script>
+        window.Vue || document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.24/vue.min.js"><\/script>')
+    </script>
+    <script>
+        if (!(typeof $().modal == 'function')) {
+            document.write('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css">');
+            document.write('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">');
+            document.write('<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"><\/script>');
+        }
     </script>
     <script src="js/main.js"></script>
 </body>

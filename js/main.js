@@ -3,16 +3,19 @@ var app = new Vue({
     el: '#app',
     data: {
         protocol: 'HTTP',
-        protocols: ['HTTP', 'HTTPS', 'FILE'],
+        protocols: ['HTTP', 'HTTPS'],
         method: 'GET',
-        methods: ['GET', 'POST', 'PUT'],
+        methods: ['GET', 'POST'],
         url: '',
         type: 'json',
-        types: ['html', 'json', 'jsonp', 'script'],
+        types: ['html', 'json'],
+        encrypt: 'application/x-www-form-urlencoded',
+        encrypts: ['application/x-www-form-urlencoded', 'multipart/form-data', 'text/plain'],
         response: '',
+        responseHeader: '',
         button: "Request!",
+        formData: {},
         parameters: [],
-        dataFormat: { name:'', value:'' },
         buttonText: {
             default: 'Request!',
             loading: '<i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i>',
@@ -48,9 +51,7 @@ var app = new Vue({
     },
     components: {
         variable: {
-            data: function() {
-                return app.dataFormat;
-            },
+            data: '',
             props: ["parameter"],
             template: '#variable-template',
             methods: {
@@ -64,24 +65,42 @@ var app = new Vue({
 
         submit: function() {
 
-            var self = this;
-            self.button = self.buttonText.loading;
+            var self = this, params = [], requestUrl = "", xhr ,formData;
 
-            aja()
-                .url(this.url)
-                .cache(false)
-                .type(this.type)
-                .on('success', function(response) {
-                    self.response = response;
-                    self.button = self.buttonText.default;
-                }).on('error', function(response) {
-                    self.response = response;
-                    self.button = self.buttonText.default;
-                }).go();
+            formData = new FormData(document.querySelector('form'));
+
+            if (this.method === "GET") {
+                formData.forEach(function(value, name) {
+                    params.push(name + "=" + value);
+                });
+                requestUrl = this.url + "?" + params.join("&");
+            } else {
+                requestUrl = this.url;
+            }
+
+            xhr = new XMLHttpRequest;
+            xhr.open(this.method, requestUrl, true);
+
+            xhr.onload = function(e) {
+                self.button = self.buttonText.loading;
+            };
+
+            xhr.onloadend = function(e) {
+                self.button = self.buttonText.default;
+                self.response = xhr.response;
+                self.responseHeader = xhr.getAllResponseHeaders();
+            };
+
+            xhr.send(formData);
+
+
         },
-
         add: function() {
-            this.parameters.push( this.dataFormat );
+            this.parameters.push({
+                name: '',
+                value: '',
+                type: 'text'
+            });
         },
 
     }
