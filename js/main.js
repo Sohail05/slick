@@ -8,7 +8,7 @@ var app = new Vue({
         methods: ['GET', 'POST'],
         url: '',
         type: 'json',
-        types: ['html', 'json'],
+        types: ['json'],
         encrypt: 'application/x-www-form-urlencoded',
         encrypts: ['application/x-www-form-urlencoded', 'multipart/form-data', 'text/plain'],
         response: '',
