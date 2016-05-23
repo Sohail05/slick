@@ -2,52 +2,40 @@ var app = new Vue({
 
     el: '#app',
     data: {
+        url: '',
+        domain: '',
+        route: '',
+        port: '',
         protocol: 'HTTP',
         protocols: ['HTTP', 'HTTPS'],
         method: 'GET',
         methods: ['GET', 'POST'],
-        url: '',
         type: 'json',
         types: ['json'],
-        encrypt: 'application/x-www-form-urlencoded',
-        encrypts: ['application/x-www-form-urlencoded', 'multipart/form-data', 'text/plain'],
         response: '',
         responseHeader: '',
         button: "Request!",
         formData: {},
         parameters: [],
+        globalVariableName: 'slick_tmp',
         buttonText: {
             default: 'Request!',
             loading: '<i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i>',
         },
     },
     watch: {
-        url: function(value) {
-            if (this.splitURL[1]) {
-                var index = this.protocols.indexOf(this.splitURL[1].toUpperCase() || "");
-                this.protocol = index != -1 ? this.protocols[index] : this.protocols[0];
-            }
+        url() {
+            this.setData();
+            this.updateProtocol();
         },
-        protocol: function(value) {
-            var pieces = this.splitURL;
-            pieces[0] = '';
-            pieces[1] = value.toLowerCase() + "://";
-            this.url = pieces.join('');
-        },
+        protocol(value){
+
+            let protocolIndex = this.protocols.indexOf(value.toUpperCase());
+            this.protocol = protocolIndex != -1 ? this.protocols[protocolIndex] : this.protocols[0];
+            this.updateProtocol();
+        }
     },
     computed: {
-
-        splitURL: function() {
-            //[0] original string
-            //[1] protocol
-            //[2] domain
-            //[3] path
-            //[4] variables
-            var re = /^(?:(\w*):\/\/)?([\w\.]*)?([^\?\s]*)?(?:\?(.*))?/gmi;
-            var match = re.exec(this.url);
-            return match;
-        }
-
     },
     components: {
         variable: {
@@ -55,9 +43,7 @@ var app = new Vue({
             props: ["parameter"],
             template: '#variable-template',
             methods: {
-                remove: function(parameter) {
-                    app.parameters.$remove(parameter);
-                },
+                remove: (parameter) => app.parameters.$remove(parameter),
             }
         },
     },
@@ -65,7 +51,10 @@ var app = new Vue({
 
         submit: function() {
 
-            var self = this, params = [], requestUrl = "", xhr ,formData;
+            var self = this,
+                params = [],
+                requestUrl = "",
+                xhr, formData;
 
             formData = new FormData(document.querySelector('form'));
 
@@ -73,7 +62,7 @@ var app = new Vue({
                 formData.forEach(function(value, name) {
                     params.push(name + "=" + value);
                 });
-                requestUrl = this.url + "?" + params.join("&");
+                requestUrl = `${this.url}${params.join("&")}`;
             } else {
                 requestUrl = this.url;
             }
@@ -81,11 +70,9 @@ var app = new Vue({
             xhr = new XMLHttpRequest;
             xhr.open(this.method, requestUrl, true);
 
-            xhr.onload = function(e) {
-                self.button = self.buttonText.loading;
-            };
+            xhr.onload = () => self.button = self.buttonText.loading;
 
-            xhr.onloadend = function(e) {
+            xhr.onloadend = () => {
                 self.button = self.buttonText.default;
                 self.response = xhr.response;
                 self.responseHeader = xhr.getAllResponseHeaders();
@@ -93,16 +80,34 @@ var app = new Vue({
 
             xhr.send(formData);
 
-
         },
-        add: function() {
-            this.parameters.push({
-                name: '',
-                value: '',
-                type: 'text'
+        addParameter: function() {
+            this.parameters.push({name: '',value: '',type: 'text'});
+        },
+        createTmp: function() {
+            window[this.globalVariableName] = JSON.parse(this.response);
+            console.log(this.globalVariableName, window[this.globalVariableName]);
+        },
+        setData: function() {
+            const RegexArray = [
+              { name: 'protocol', regex: /^(?:(\w*):\/\/)/gmi },
+              { name: 'domain',   regex: /^(?:\w*:\/\/)?([\w\.]*)/gmi },
+              { name: 'port',     regex: /^(?:\w*:\/\/)?(?:[\w\.]*)?(?::([0-9]*))/gmi},
+              { name: 'route',    regex: /^(?:\w*:\/\/)?(?:[\w\.]*)?(?::[0-9]*)?([^:\?\s]*)/gmi},
+            //  { name: 'parameters', regex : /^(?:\w*:\/\/)?(?:[\w\.]*)?(?::[0-9]*)?(?:[^:\?\s]*)?(?:\?(^\s))/gmi }
+            ];
+
+            RegexArray.forEach( (piece) => {
+                let result = piece.regex.exec(this.url);
+                if (result) { this[piece.name] = result[1]; }
             });
-        },
-
+        },updateData: function(){
+          //this.url = `${this.protocol.toLowerCase()}://${this.domain}:${this.port}${this.route}`;
+        },updateProtocol: function(){
+          let regex = /^(?:(\w*):\/\/)(.*)/gmi;
+          let result = regex.exec(this.url);
+          this.url = result ? this.protocol.toLowerCase() + "://" + result[2] : this.protocol.toLowerCase() + "://" + this.url;
+        }
     }
 
 });

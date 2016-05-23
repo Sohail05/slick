@@ -24,6 +24,6 @@
   "dependencies": {
     "vue": "^1.0.21",
     "font-awesome": "^4.6.1",
-    "bootstrap": "^3.3.6",
+    "bootstrap": "^3.3.6"
   }
 }

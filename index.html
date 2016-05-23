@@ -19,7 +19,6 @@
     <!-- JS -->
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="bower_components/aja/src/aja.js"></script>
     <script src="bower_components/vue/dist/vue.js"></script>
 
 </head>
@@ -64,7 +63,7 @@
                     <variable :parameter="parameter"></variable>
                 </div>
                 <div>
-                    <button class="btn btn-default" @click.prevent="add"><i class="fa fa-plus fa-fw"></i></button>
+                    <button class="btn btn-default" @click.prevent="addParameter"><i class="fa fa-plus fa-fw"></i></button>
                     <button class="btn btn-default" v-show="url">{{{button}}}</button>
                 </div>
             </form>
@@ -75,7 +74,7 @@
                 </div>
                 <div v-show="responseHeader" style="text-align:left">
                     <p>Request Header</p>
-                    <pre>{{ responseHeader|json }}</pre>
+                    <pre>{{ responseHeader | json }}</pre>
                 </div>
                 <div v-show="responseHeader" style="text-align:left">
                     <select class="btn btn-default" v-model="type">
@@ -83,6 +82,8 @@
                             {{ i }}
                         </option>
                     </select>
+                    <button class="btn btn-default" @click.prevent="createTmp">Create Global Object ({{globalVariableName}})</button>
+                    <input type="text" v-model="globalVariableName">
                     <pre v-show="type=='json'">{{ response|json }}</pre>
                 </div>
             </div>
